@@ -1,0 +1,39 @@
+{
+  "name": "proffer",
+  "version": "1.0.0",
+  "description": "Realtime V8 Tick Processor",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/index.js",
+    "cov": "tap --cov test/index.js",
+    "cov-ui": "tap --cov --coverage-report=html test/index.js"
+  },
+  "keywords": [],
+  "author": "David Mark Clements <huperekchuno@goolgemail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "demangle": "^1.0.1",
+    "ndjson": "^1.5.0",
+    "pump": "^3.0.0",
+    "pumpify": "^1.4.0",
+    "sorted-array-functions": "^1.1.0",
+    "split2": "^2.2.0",
+    "through2": "^2.0.3"
+  },
+  "devDependencies": {
+    "dedent": "^0.7.0",
+    "tap": "^11.1.4"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidmarkclements/proffer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidmarkclements/proffer/issues"
+  },
+  "homepage": "https://github.com/davidmarkclements/proffer#readme"
+}
