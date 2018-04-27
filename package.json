@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Realtime V8 Tick Processor",
   "main": "index.js",
+  "bin": "./cmd.js",
   "scripts": {
     "test": "tap test/index.js",
     "cov": "tap --cov test/index.js",
