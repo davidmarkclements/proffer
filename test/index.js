@@ -531,6 +531,28 @@ if (process.platform !== 'win32') {
     `)
   })
 
+  test('shared-library will not overwrite library address space with any symbols on that address', ({is, end}) => {
+    const { stdout } = spawnSync('nm', ['n', process.argv[0]])
+    const line = stdout.toString().split('\n')[0]
+    const [ strAddr, ...rest ] = line.split(' ')
+    const addr = parseInt(strAddr, 16).toString(16)
+    const name = rest.join(' ').replace(/^T|t /, '')
+    const stream = proffer()
+
+    stream.once('data', (tick) => {
+      is(tick.stack[0].name, name, 'address mapped to static function')
+      end()
+    })
+
+    stream.write(dedent `
+      v8-version,6,6,346,24,-node.5,0
+      shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
+      profiler,begin,1
+      tick,0x1007269a9,248316,0,0x3000000020,0,${addr}
+      \n
+    `)
+  })
+
   test('shared-library maps to library name when symbol is not found', ({is, end}) => {
     const stream = proffer()
 
@@ -546,31 +568,6 @@ if (process.platform !== 'win32') {
       shared-library,/library/which/will/not/resolve,0x100001000,0x100c106aa,0
       profiler,begin,1
       tick,0x1007269a9,248316,0,0x3000000020,0,0x100001000
-      \n
-    `)
-  })
-
-  test('shared-library ignores start symbol', ({is, end}) => {
-    const { stdout } = spawnSync('nm', [process.argv[0]])
-    const line = stdout.toString().split('\n').find((l) => / start$/.test(l))
-    const [ strAddr, ...rest ] = line.split(' ')
-    const addr = parseInt(strAddr, 16).toString(16)
-    const name = rest.join(' ').replace(/^T|t /, '')
-    const stream = proffer()
-
-
-    stream.once('data', (tick) => {
-      is(tick.stack[0].name, process.argv[0], 'start symbol ignored')
-      end()
-    })
-
-    // todo, figure out if the node address space (start,end)
-    // should be determined as well
-    stream.write(dedent `
-      v8-version,6,6,346,24,-node.5,0
-      shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
-      profiler,begin,1
-      tick,0x1007269a9,248316,0,0x3000000020,0,${addr}
       \n
     `)
   })
