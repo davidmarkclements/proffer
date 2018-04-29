@@ -653,37 +653,6 @@ if (process.platform !== 'win32') {
   test('shared-library maps to library name when symbol is not found')
 }
 
-test('tick only JS VM stacks are processed', ({is, end}) => {
-  const stream = proffer()
-
-  stream.once('data', (tick) => {
-    is(tick.stack[0].name, 'FindMe', 'non JS VM stacks ignored')
-    end()
-  })
-
-  stream.write(dedent `
-    v8-version,6,6,346,24,-node.5,0
-    profiler,begin,1
-    code-creation,Builtin,3,104700,0x1cd8396af430,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af440,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af450,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af460,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af470,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af480,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af490,371,IgnoreMe
-    code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
-    tick,0x1007269a9,248316,1,0x3000000020,1,0x1cd8396af431
-    tick,0x1007269a9,248316,1,0x3000000020,2,0x1cd8396af441
-    tick,0x1007269a9,248316,1,0x3000000020,3,0x1cd8396af451
-    tick,0x1007269a9,248316,1,0x3000000020,4,0x1cd8396af461
-    tick,0x1007269a9,248316,1,0x3000000020,5,0x1cd8396af471
-    tick,0x1007269a9,248316,1,0x3000000020,6,0x1cd8396af481
-    tick,0x1007269a9,248316,1,0x3000000020,7,0x1cd8396af491
-    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
-    \n
-  `)
-})
-
 test('tick resolves name to address if dynamic function not found', ({is, end}) => {
   const stream = proffer()
 
@@ -804,3 +773,32 @@ test('tick does not add top of stack address to stack when top of stack address 
   `)
 })
 
+test('tick maps vm state enum to vm state description', ({is, end}) => {
+  const stream = proffer()
+  var n = 0
+  const expected = [
+    'JS', 'GC', 'PARSER', 'BYTECODE_COMPILER', 'COMPILER', 
+    'OTHER', 'EXTERNAL', 'IDLE', 'UNKNOWN', 'UNKNOWN'
+  ]
+  stream.on('data', (tick) => {
+    is(tick.vm, expected[n], `correct vm description (${expected[n]})`)
+    n += 1
+    if (n === 10) end()
+  })
+
+  stream.write(dedent `
+    v8-version,6,6,346,24,-node.5,0
+    profiler,begin,1
+    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,1,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,2,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,3,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,4,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,5,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,6,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,7,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,8,0x1cd8396af4a1
+    tick,0x1007269a9,248316,0,0x3000000020,9,0x1cd8396af4a1
+    \n
+  `)
+})
