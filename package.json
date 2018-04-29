@@ -7,7 +7,8 @@
   "scripts": {
     "test": "tap test/index.js",
     "cov": "tap --cov test/index.js",
-    "cov-ui": "tap --cov --coverage-report=html test/index.js"
+    "cov-ui": "tap --cov --coverage-report=html test/index.js",
+    "lint": "standard"
   },
   "keywords": [],
   "author": "David Mark Clements <huperekchuno@goolgemail.com>",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "dedent": "^0.7.0",
+    "standard": "^11.0.1",
     "tap": "^11.1.4"
   },
   "directories": {

@@ -3,10 +3,8 @@ const { test } = require('tap')
 const cp = require('child_process')
 const { spawnSync } = cp
 const { join } = require('path')
-const { createReadStream, readFileSync } = require('fs')
+const { createReadStream } = require('fs')
 const dedent = require('dedent')
-const through = require('through2').obj
-const pump = require('pump')
 const proffer = require('..')
 
 test('code-creation adds code which tick stack addresses resolve to on an lte basis', ({is, end}) => {
@@ -17,7 +15,7 @@ test('code-creation adds code which tick stack addresses resolve to on an lte ba
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -34,7 +32,7 @@ test('code-creation also handles V8 6.2 logs', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,2,414,50,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,"FindMe"
@@ -52,7 +50,7 @@ test('code-creation CODE type', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -70,7 +68,7 @@ test('code-creation JS type', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe,0x2c7f8b99f828,*
@@ -88,7 +86,7 @@ test('code-creation JS type optimized', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe,0x2c7f8b99f828,*
@@ -106,7 +104,7 @@ test('code-creation JS type not optimized', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe,0x2c7f8b99f828,~
@@ -123,7 +121,7 @@ test('code-creation duplicates entries at shared function address when supplied'
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe,0x1cd8396af400,*
@@ -143,7 +141,7 @@ test('code-creation will not duplicate entries at shared function address if add
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe,0x1cd8396af400,*
@@ -161,7 +159,7 @@ test('code-creation skips Handler tags', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -179,7 +177,7 @@ test('code-creation ignores nameless duplicate frames', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -199,7 +197,7 @@ test('code-creation replaces the name of a duplicate frame if the name is differ
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -218,7 +216,7 @@ test('code-creation does not add the name of a duplicate frame to an `alt` array
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -241,7 +239,7 @@ test('code-creation does not duplicate names in the `alt` array', ({is, end}) =>
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,FindMe
@@ -253,7 +251,7 @@ test('code-creation does not duplicate names in the `alt` array', ({is, end}) =>
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
     \n
   `)
-}) 
+})
 
 test('code-move moves entry at one address to another address', ({is, end}) => {
   const stream = proffer()
@@ -266,19 +264,19 @@ test('code-move moves entry at one address to another address', ({is, end}) => {
         is(tick.stack[0].name, 'MoveMe', 'entry successfully moved to new address')
         end()
       })
-      stream.write(dedent `
+      stream.write(dedent`
         tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
         \n
       `)
     })
-    stream.write(dedent `
+    stream.write(dedent`
       code-move,0x1cd8396af400,0x1cd8396af4a0
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af402
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af400,10,MoveMe
@@ -297,14 +295,14 @@ test('code-move removes pre-existing entries in target address space', ({is, end
       is(tick.stack[0].name, 'ShouldBeMoved', 'resolves to correct entry, pre-existing entry removed')
       end()
     })
-    stream.write(dedent `
+    stream.write(dedent`
       code-move,0x1cd8396af400,0x1cd8396af4a0
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a1,10,PreExistingRemoveMe
@@ -327,20 +325,19 @@ test('code-move does not remove pre-existing entries outside of target address s
         is(tick.stack[0].name, 'PreExisting', 'pre-existing entry remains')
         end()
       })
-      stream.write(dedent `
+      stream.write(dedent`
         tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af492
         \n
       `)
-
     })
-    stream.write(dedent `
+    stream.write(dedent`
       code-move,0x1cd8396af400,0x1cd8396af4a0
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af480,10,PreExisting
@@ -358,7 +355,7 @@ test('code-move from address not found', ({is, end}) => {
     }
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-move,0x1cd8396af4a0,0x1cd8396af4a1
@@ -377,19 +374,19 @@ test('sfi-move moves entry at one address to another address', ({is, end}) => {
         is(tick.stack[0].name, 'MoveMe', 'entry successfully moved to new address')
         end()
       })
-      stream.write(dedent `
+      stream.write(dedent`
         tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
         \n
       `)
     })
-    stream.write(dedent `
+    stream.write(dedent`
       sfi-move,0x1cd8396af400,0x1cd8396af4a0
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af402
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af400,10,MoveMe
@@ -408,14 +405,14 @@ test('sfi-move removes pre-existing entries in target address space', ({is, end}
       is(tick.stack[0].name, 'ShouldBeMoved', 'resolves to correct entry, pre-existing entry removed')
       end()
     })
-    stream.write(dedent `
+    stream.write(dedent`
       sfi-move,0x1cd8396af400,0x1cd8396af4a0
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a1,10,PreExistingRemoveMe
@@ -433,7 +430,7 @@ test('sfi-move from address not found', ({is, end}) => {
     }
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     sfi-move,0x1cd8396af4a0,0x1cd8396af4a1
@@ -450,14 +447,14 @@ test('code-delete removal', ({is, end}) => {
       is(tick.stack[0].name, 'RevealMe', 'code deletion succeeded')
       end()
     })
-    stream.write(dedent `
+    stream.write(dedent`
       code-delete,0x1cd8396af4a1
       tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a2
       \n
     `)
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x1cd8396af4a0,371,RevealMe
@@ -475,14 +472,13 @@ test('code-delete address not found', ({is, end}) => {
     }
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-delete,0x1cd8396af4a1
     \n
   `)
 })
-
 
 if (process.platform !== 'win32') {
   test('shared-library maps addresses to static functions', ({is, end}) => {
@@ -498,7 +494,7 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
       profiler,begin,1
@@ -511,11 +507,9 @@ if (process.platform !== 'win32') {
     const line = '000000010000123c T _BIO_f_ssl'
     const [ strAddr, ...rest ] = line.split(' ')
     const addrn = parseInt(strAddr, 16)
-    const addr = '0x' + (addrn.toString(16))
     const name = rest.join(' ').replace(/^T|t /, '').trim()
-    const slide = 100
 
-   const spawn = cp.spawn 
+    const spawn = cp.spawn
     cp.spawn = (cmd, ...args) => {
       if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
       const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output'))
@@ -533,7 +527,7 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,${process.argv[0]},0x${(addrn + 1e5).toString(16)},0x${(addrn + 9e9).toString(16)},0
       profiler,begin,1
@@ -547,7 +541,7 @@ if (process.platform !== 'win32') {
     const [ strAddr, ...rest ] = line.split(' ')
     const addr = parseInt(strAddr, 16).toString(16)
     const name = rest.join(' ').replace(/^T|t /, '')
-    const spawn = cp.spawn 
+    const spawn = cp.spawn
     cp.spawn = (cmd, ...args) => {
       if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
       const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output'))
@@ -564,7 +558,7 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
       profiler,begin,1
@@ -583,7 +577,7 @@ if (process.platform !== 'win32') {
 
     // todo, figure out if the node address space (start,end)
     // should be determined as well
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,/library/which/will/not/resolve,0x100001000,0x100c106aa,0
       profiler,begin,1
@@ -593,7 +587,7 @@ if (process.platform !== 'win32') {
   })
 
   test('shared-library zero addresses in nm output', ({is, end}) => {
-    const spawn = cp.spawn 
+    const spawn = cp.spawn
     cp.spawn = (cmd, ...args) => {
       if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
       const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output-zero-addr'))
@@ -613,7 +607,7 @@ if (process.platform !== 'win32') {
 
     // todo, figure out if the node address space (start,end)
     // should be determined as well
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
       profiler,begin,1
@@ -623,13 +617,7 @@ if (process.platform !== 'win32') {
   })
 
   test('shared-library also handles V8 6.2 logs', ({is, end}) => {
-    const { stdout } = spawnSync('nm', [process.argv[0]])
-    const line = stdout.toString().split('\n')[0]
-    const [ strAddr, ...rest ] = line.split(' ')
-    const addr = parseInt(strAddr, 16).toString(16)
-    const name = rest.join(' ').replace(/^T|t /, '')
     const stream = proffer()
-
 
     stream.once('data', (tick) => {
       is(tick.stack[0].name, '/library/which/will/not/resolve', 'address mapped to library')
@@ -638,7 +626,7 @@ if (process.platform !== 'win32') {
 
     // todo, figure out if the node address space (start,end)
     // should be determined as well
-    stream.write(dedent `
+    stream.write(dedent`
       v8-version,6,2,414,50,0
       shared-library,"/library/which/will/not/resolve",0x100001000,0x100c106aa,0
       profiler,begin,1
@@ -646,7 +634,6 @@ if (process.platform !== 'win32') {
       \n
     `)
   })
-
 } else {
   // TODO Windows equivalent
   test('shared-library maps addresses to static functions')
@@ -661,7 +648,7 @@ test('tick resolves name to address if dynamic function not found', ({is, end}) 
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
@@ -677,7 +664,7 @@ test('tick resolves name to address if static function not found', ({is, end}) =
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
@@ -693,7 +680,7 @@ test('tick resolves name to address if static function not found', ({is, end}) =
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
@@ -710,7 +697,7 @@ test('tick adds the pc field to the stack', ({is, end}) => {
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
@@ -727,7 +714,7 @@ test('tick adds external cb address to top of stack (when present) instead of pc
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,1,0x3000000020,0,0x1cd8396af4a1
@@ -745,7 +732,7 @@ test('tick adds top of stack address to stack (above pc) when top of stack addre
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,LazyCompile,3,104700,0x3000000020,371,Topper,0x3000000030,*
@@ -764,7 +751,7 @@ test('tick does not add top of stack address to stack when top of stack address 
     end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     code-creation,Builtin,3,104700,0x3000000020,371,SomeCodeFunc
@@ -777,7 +764,7 @@ test('tick maps vm state enum to vm state description', ({is, end}) => {
   const stream = proffer()
   var n = 0
   const expected = [
-    'JS', 'GC', 'PARSER', 'BYTECODE_COMPILER', 'COMPILER', 
+    'JS', 'GC', 'PARSER', 'BYTECODE_COMPILER', 'COMPILER',
     'OTHER', 'EXTERNAL', 'IDLE', 'UNKNOWN', 'UNKNOWN'
   ]
   stream.on('data', (tick) => {
@@ -786,7 +773,7 @@ test('tick maps vm state enum to vm state description', ({is, end}) => {
     if (n === 10) end()
   })
 
-  stream.write(dedent `
+  stream.write(dedent`
     v8-version,6,6,346,24,-node.5,0
     profiler,begin,1
     tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1

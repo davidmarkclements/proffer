@@ -17,8 +17,8 @@ function proffer (opts = {}) {
     code: {},
     addresses: [],
     opts: {
-      nm: 'nm', 
-      warn: process.emitWarning.bind(process), 
+      nm: 'nm',
+      warn: process.emitWarning.bind(process),
       ...opts
     }
   }
@@ -31,7 +31,7 @@ function proffer (opts = {}) {
     line = line.toString()
     const event = line.substr(0, line.indexOf(','))
     switch (event) {
-      case 'v8-version': 
+      case 'v8-version':
         return cb()
       case 'code-creation':
         codeCreation(line, cb)
@@ -59,5 +59,4 @@ function proffer (opts = {}) {
   stream._readableState.objectMode = true
 
   return stream
-
 }
