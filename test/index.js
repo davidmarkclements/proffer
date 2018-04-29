@@ -666,22 +666,6 @@ test('tick resolves name to address if static function not found', ({is, end}) =
   `)
 })
 
-test('tick resolves name to address if static function not found', ({is, end}) => {
-  const stream = proffer()
-
-  stream.once('data', (tick) => {
-    is(tick.stack[0].name, '0x1cd8396af4a1', 'name is address')
-    end()
-  })
-
-  stream.write(dedent`
-    v8-version,6,6,346,24,-node.5,0
-    profiler,begin,1
-    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
-    \n
-  `)
-})
-
 test('tick adds the pc field to the stack', ({is, end}) => {
   const stream = proffer()
 
