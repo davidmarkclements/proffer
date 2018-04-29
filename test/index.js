@@ -1,6 +1,7 @@
 'use strict'
 const { test } = require('tap')
-const { spawnSync } = require('child_process')
+const cp = require('child_process')
+const { spawnSync } = cp
 const { join } = require('path')
 const { createReadStream, readFileSync } = require('fs')
 const dedent = require('dedent')
@@ -507,14 +508,24 @@ if (process.platform !== 'win32') {
   })
 
   test('shared-library adjusts static function addresses per start address when appropriate', ({is, end}) => {
-    const { stdout } = spawnSync('nm', ['-n', process.argv[0]])
-    const line = stdout.toString().split('\n').find((l) => !/T start/.test(l) && / T /i.test(l))
+    const line = '000000010000123c T _BIO_f_ssl'
     const [ strAddr, ...rest ] = line.split(' ')
     const addrn = parseInt(strAddr, 16)
     const addr = '0x' + (addrn.toString(16))
     const name = rest.join(' ').replace(/^T|t /, '').trim()
     const slide = 100
-    const stream = proffer()
+
+   const spawn = cp.spawn 
+    cp.spawn = (cmd, ...args) => {
+      if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
+      const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output'))
+      cp.spawn = spawn
+      return { stdout }
+    }
+    Object.keys(require.cache).forEach((id) => {
+      delete require.cache[id]
+    })
+    const stream = require('..')()
 
     stream.once('data', (tick) => {
       is(tick.stack[0].name, name, 'address mapped to static function')
@@ -532,12 +543,21 @@ if (process.platform !== 'win32') {
   })
 
   test('shared-library will not overwrite library address space with any symbols on that address', ({is, end}) => {
-    const { stdout } = spawnSync('nm', ['n', process.argv[0]])
-    const line = stdout.toString().split('\n')[0]
+    const line = '00000001000fd500 t K256'
     const [ strAddr, ...rest ] = line.split(' ')
     const addr = parseInt(strAddr, 16).toString(16)
     const name = rest.join(' ').replace(/^T|t /, '')
-    const stream = proffer()
+    const spawn = cp.spawn 
+    cp.spawn = (cmd, ...args) => {
+      if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
+      const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output'))
+      cp.spawn = spawn
+      return { stdout }
+    }
+    Object.keys(require.cache).forEach((id) => {
+      delete require.cache[id]
+    })
+    const stream = require('..')()
 
     stream.once('data', (tick) => {
       is(tick.stack[0].name, name, 'address mapped to static function')
