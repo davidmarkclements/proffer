@@ -575,8 +575,6 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    // todo, figure out if the node address space (start,end)
-    // should be determined as well
     stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,/library/which/will/not/resolve,0x100001000,0x100c106aa,0
@@ -605,8 +603,6 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    // todo, figure out if the node address space (start,end)
-    // should be determined as well
     stream.write(dedent`
       v8-version,6,6,346,24,-node.5,0
       shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
@@ -624,8 +620,6 @@ if (process.platform !== 'win32') {
       end()
     })
 
-    // todo, figure out if the node address space (start,end)
-    // should be determined as well
     stream.write(dedent`
       v8-version,6,2,414,50,0
       shared-library,"/library/which/will/not/resolve",0x100001000,0x100c106aa,0
