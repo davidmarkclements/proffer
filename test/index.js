@@ -592,6 +592,36 @@ if (process.platform !== 'win32') {
     `)
   })
 
+  test('shared-library zero addresses in nm output', ({is, end}) => {
+    const spawn = cp.spawn 
+    cp.spawn = (cmd, ...args) => {
+      if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
+      const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output-zero-addr'))
+      cp.spawn = spawn
+      return { stdout }
+    }
+    Object.keys(require.cache).forEach((id) => {
+      delete require.cache[id]
+    })
+    const stream = require('..')()
+
+    stream.once('data', (tick) => {
+      // if the zero address wasn't ignored, name would be '__mh_execute_header'
+      is(tick.stack[0].name, process.argv[0], 'zero address ignored')
+      end()
+    })
+
+    // todo, figure out if the node address space (start,end)
+    // should be determined as well
+    stream.write(dedent `
+      v8-version,6,6,346,24,-node.5,0
+      shared-library,${process.argv[0]},0x100001000,0x100c106aa,0
+      profiler,begin,1
+      tick,0x1007269a9,248316,0,0x3000000020,0,0x100001000
+      \n
+    `)
+  })
+
   test('shared-library also handles V8 6.2 logs', ({is, end}) => {
     const { stdout } = spawnSync('nm', [process.argv[0]])
     const line = stdout.toString().split('\n')[0]
