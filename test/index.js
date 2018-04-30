@@ -482,12 +482,21 @@ test('code-delete address not found', ({is, end}) => {
 
 if (process.platform !== 'win32') {
   test('shared-library maps addresses to static functions', ({is, end}) => {
-    const { stdout } = spawnSync('nm', [process.argv[0]])
-    const line = stdout.toString().split('\n')[0]
+    const line = '00000001000fd500 t K256'
     const [ strAddr, ...rest ] = line.split(' ')
     const addr = parseInt(strAddr, 16).toString(16)
     const name = rest.join(' ').replace(/^T|t /, '')
-    const stream = proffer()
+    const spawn = cp.spawn
+    cp.spawn = (cmd, ...args) => {
+      if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
+      const stdout = createReadStream(join(__dirname, 'fixtures', 'mock-nm-output'))
+      cp.spawn = spawn
+      return { stdout }
+    }
+    Object.keys(require.cache).forEach((id) => {
+      delete require.cache[id]
+    })
+    const stream = require('..')()
 
     stream.once('data', (tick) => {
       is(tick.stack[0].name, name, 'address mapped to static function')
