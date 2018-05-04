@@ -1,7 +1,6 @@
 'use strict'
 const { test } = require('tap')
 const cp = require('child_process')
-const { spawnSync } = cp
 const { join } = require('path')
 const { createReadStream } = require('fs')
 const dedent = require('dedent')
@@ -773,6 +772,84 @@ test('tick maps vm state enum to vm state description', ({is, end}) => {
     tick,0x1007269a9,248316,0,0x3000000020,7,0x1cd8396af4a1
     tick,0x1007269a9,248316,0,0x3000000020,8,0x1cd8396af4a1
     tick,0x1007269a9,248316,0,0x3000000020,9,0x1cd8396af4a1
+    \n
+  `)
+})
+
+test('code-source-info adds function source extracted from script log events to tick stack frames', ({is, end}) => {
+  const stream = proffer()
+
+  stream.once('data', (tick) => {
+    is(tick.stack[0].name, 'FindMe file.js:1:1', 'address mapped to function')
+    is(tick.stack[0].source, `function funcSource () { return 'woop' }`, 'function source added to tick stack')
+    end()
+  })
+
+  stream.write(dedent`
+    v8-version,6,6,346,24,-node.5,0
+    profiler,begin,1
+    code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe file.js:1:1,0x2c7f8b99f828,~
+    script,1,file.js,(function (exports\x2C require\x2C module\x2C __filename\x2C __dirname) { function funcSource () { return 'woop' } })
+    code-source-info,0x1cd8396af4a0,1,62,102,C0O0C1O0C7O1338,,
+    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
+    \n
+  `)
+})
+
+test('code-source-info warns when code address is not found', ({is, end}) => {
+  const stream = proffer({
+    warn: (msg) => {
+      is(msg, 'code-source-info code address 0x1cd8396af4b0 not found')
+      end()
+    }
+  })
+
+  stream.write(dedent`
+    v8-version,6,6,346,24,-node.5,0
+    profiler,begin,1
+    code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe file.js:1:1,0x2c7f8b99f828,~
+    script,1,file.js,(function (exports\x2C require\x2C module\x2C __filename\x2C __dirname) { function funcSource () { return 'woop' } })
+    code-source-info,0x1cd8396af4b0,1,62,102,C0O0C1O0C7O1338,,
+    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
+    \n
+  `)
+})
+
+test('code-source-info warns when script is not found', ({is, end}) => {
+  const stream = proffer({
+    warn: (msg) => {
+      is(msg, 'code-source-info script 2 not found')
+      end()
+    }
+  })
+
+  stream.write(dedent`
+    v8-version,6,6,346,24,-node.5,0
+    profiler,begin,1
+    code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe file.js:1:1,0x2c7f8b99f828,~
+    script,1,file.js,(function (exports\x2C require\x2C module\x2C __filename\x2C __dirname) { function funcSource () { return 'woop' } })
+    code-source-info,0x1cd8396af4a0,2,62,102,C0O0C1O0C7O1338,,
+    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
+    \n
+  `)
+})
+
+test('script event will add empty source string when missing source field (crash defense)', ({is, end}) => {
+  const stream = proffer()
+
+  stream.once('data', (tick) => {
+    is(tick.stack[0].name, 'FindMe file.js:1:1', 'address mapped to function')
+    is(tick.stack[0].source, '', 'function source empty')
+    end()
+  })
+
+  stream.write(dedent`
+    v8-version,6,6,346,24,-node.5,0
+    profiler,begin,1
+    code-creation,Script,3,104700,0x1cd8396af4a0,371,FindMe file.js:1:1,0x2c7f8b99f828,~
+    script,1,file.js
+    code-source-info,0x1cd8396af4a0,1,0,1,C0O0C1O0C7O1338,,
+    tick,0x1007269a9,248316,0,0x3000000020,0,0x1cd8396af4a1
     \n
   `)
 })
