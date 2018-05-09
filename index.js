@@ -20,11 +20,10 @@ function proffer (opts = {}) {
     code: {},
     addresses: [],
     scripts: {},
-    opts: {
+    opts: Object.assign({}, opts, {
       nm: 'nm',
       warn: process.emitWarning.bind(process),
-      ...opts
-    }
+    })
   }
 
   const codeCreation = createCodeCreation(state)
