@@ -11,22 +11,8 @@
     "lint": "standard"
   },
   "keywords": [],
-  "author": "David Mark Clements <huperekchuno@goolgemail.com>",
+  "author": "David Mark Clements (@davidmarkclem)",
   "license": "MIT",
-  "dependencies": {
-    "demangle": "^1.0.1",
-    "ndjson": "^1.5.0",
-    "pump": "^3.0.0",
-    "pumpify": "^1.4.0",
-    "sorted-array-functions": "^1.1.0",
-    "split2": "^2.2.0",
-    "through2": "^2.0.3"
-  },
-  "devDependencies": {
-    "dedent": "^0.7.0",
-    "standard": "^11.0.1",
-    "tap": "^11.1.4"
-  },
   "directories": {
     "lib": "lib",
     "test": "test"
@@ -38,5 +24,19 @@
   "bugs": {
     "url": "https://github.com/davidmarkclements/proffer/issues"
   },
-  "homepage": "https://github.com/davidmarkclements/proffer#readme"
+  "homepage": "https://github.com/davidmarkclements/proffer#readme",
+  "dependencies": {
+    "demangle": "^1.0.1",
+    "ndjson": "^1.5.0",
+    "pump": "^3.0.0",
+    "pumpify": "^2.0.0",
+    "sorted-array-functions": "^1.2.0",
+    "split2": "^3.1.1",
+    "through2": "^3.0.1"
+  },
+  "devDependencies": {
+    "dedent": "^0.7.0",
+    "standard": "^14.3.1",
+    "tap": "^14.6.5"
+  }
 }
