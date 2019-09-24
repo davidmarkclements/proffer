@@ -22,7 +22,6 @@ This will output a stream of newline delimited JSON where hex addresses
 have been mapped to function names, paths and locations along with 
 other useful meta data.
 
-
 ## Supported Node Versions
 
 * Node 8.x.x

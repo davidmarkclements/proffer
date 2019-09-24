@@ -36,7 +36,7 @@ function proffer (opts = {}) {
 
   const parser = through.obj((line, _, cb) => {
     const row = line.toString().split(',')
-    const [ event ] = row
+    const [event] = row
     switch (event) {
       case 'tick':
         tick(row, cb)

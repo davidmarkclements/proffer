@@ -6,7 +6,7 @@ const { createReadStream } = require('fs')
 const dedent = require('dedent')
 const proffer = require('..')
 
-test('code-creation adds code which tick stack addresses resolve to on an lte basis', ({is, end}) => {
+test('code-creation adds code which tick stack addresses resolve to on an lte basis', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -23,7 +23,7 @@ test('code-creation adds code which tick stack addresses resolve to on an lte ba
   `)
 })
 
-test('code-creation also handles V8 6.2 logs', ({is, end}) => {
+test('code-creation also handles V8 6.2 logs', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -40,7 +40,7 @@ test('code-creation also handles V8 6.2 logs', ({is, end}) => {
   `)
 })
 
-test('code-creation CODE type', ({is, end}) => {
+test('code-creation CODE type', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -58,7 +58,7 @@ test('code-creation CODE type', ({is, end}) => {
   `)
 })
 
-test('code-creation JS type', ({is, end}) => {
+test('code-creation JS type', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -76,7 +76,7 @@ test('code-creation JS type', ({is, end}) => {
   `)
 })
 
-test('code-creation JS type optimized', ({is, end}) => {
+test('code-creation JS type optimized', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -94,7 +94,7 @@ test('code-creation JS type optimized', ({is, end}) => {
   `)
 })
 
-test('code-creation JS type not optimized', ({is, end}) => {
+test('code-creation JS type not optimized', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -112,7 +112,7 @@ test('code-creation JS type not optimized', ({is, end}) => {
   `)
 })
 
-test('code-creation duplicates entries at shared function address when supplied', ({is, end}) => {
+test('code-creation duplicates entries at shared function address when supplied', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -129,7 +129,7 @@ test('code-creation duplicates entries at shared function address when supplied'
   `)
 })
 
-test('code-creation will not duplicate entries at shared function address if address is already taken', ({is, end}) => {
+test('code-creation will not duplicate entries at shared function address if address is already taken', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -150,7 +150,7 @@ test('code-creation will not duplicate entries at shared function address if add
   `)
 })
 
-test('code-creation skips Handler tags', ({is, end}) => {
+test('code-creation skips Handler tags', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -168,7 +168,7 @@ test('code-creation skips Handler tags', ({is, end}) => {
   `)
 })
 
-test('code-creation ignores nameless duplicate frames', ({is, end}) => {
+test('code-creation ignores nameless duplicate frames', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -186,7 +186,7 @@ test('code-creation ignores nameless duplicate frames', ({is, end}) => {
   `)
 })
 
-test('code-creation replaces the name of a duplicate frame if the name is different, adding the original name to an `alt` array', ({is, end}) => {
+test('code-creation replaces the name of a duplicate frame if the name is different, adding the original name to an `alt` array', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -206,7 +206,7 @@ test('code-creation replaces the name of a duplicate frame if the name is differ
   `)
 })
 
-test('code-creation does not add the name of a duplicate frame to an `alt` array if the name is the same', ({is, end}) => {
+test('code-creation does not add the name of a duplicate frame to an `alt` array if the name is the same', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -225,7 +225,7 @@ test('code-creation does not add the name of a duplicate frame to an `alt` array
   `)
 })
 
-test('code-creation does not duplicate names in the `alt` array', ({is, end}) => {
+test('code-creation does not duplicate names in the `alt` array', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -252,7 +252,7 @@ test('code-creation does not duplicate names in the `alt` array', ({is, end}) =>
   `)
 })
 
-test('code-move moves entry at one address to another address', ({is, end}) => {
+test('code-move moves entry at one address to another address', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -284,7 +284,7 @@ test('code-move moves entry at one address to another address', ({is, end}) => {
   `)
 })
 
-test('code-move removes pre-existing entries in target address space', ({is, end}) => {
+test('code-move removes pre-existing entries in target address space', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -311,7 +311,7 @@ test('code-move removes pre-existing entries in target address space', ({is, end
   `)
 })
 
-test('code-move does not remove pre-existing entries outside of target address space', ({is, end}) => {
+test('code-move does not remove pre-existing entries outside of target address space', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -346,10 +346,10 @@ test('code-move does not remove pre-existing entries outside of target address s
   `)
 })
 
-test('code-move from address not found', ({is, end}) => {
+test('code-move from address not found', ({ is, end }) => {
   const stream = proffer({
     warn: (str) => {
-      is(str, `code-move address 0x1cd8396af4a0 not found`)
+      is(str, 'code-move address 0x1cd8396af4a0 not found')
       end()
     }
   })
@@ -362,7 +362,7 @@ test('code-move from address not found', ({is, end}) => {
   `)
 })
 
-test('sfi-move moves entry at one address to another address', ({is, end}) => {
+test('sfi-move moves entry at one address to another address', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -394,7 +394,7 @@ test('sfi-move moves entry at one address to another address', ({is, end}) => {
   `)
 })
 
-test('sfi-move removes pre-existing entries in target address space', ({is, end}) => {
+test('sfi-move removes pre-existing entries in target address space', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -421,10 +421,10 @@ test('sfi-move removes pre-existing entries in target address space', ({is, end}
   `)
 })
 
-test('sfi-move from address not found', ({is, end}) => {
+test('sfi-move from address not found', ({ is, end }) => {
   const stream = proffer({
     warn: (str) => {
-      is(str, `sfi-move address 0x1cd8396af4a0 not found`)
+      is(str, 'sfi-move address 0x1cd8396af4a0 not found')
       end()
     }
   })
@@ -437,7 +437,7 @@ test('sfi-move from address not found', ({is, end}) => {
   `)
 })
 
-test('code-delete removal', ({is, end}) => {
+test('code-delete removal', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -463,7 +463,7 @@ test('code-delete removal', ({is, end}) => {
   `)
 })
 
-test('code-delete address not found', ({is, end}) => {
+test('code-delete address not found', ({ is, end }) => {
   const stream = proffer({
     warn: (str) => {
       is(str, 'code-delete address 0x1cd8396af4a1 not found', 'warning emitted')
@@ -480,9 +480,9 @@ test('code-delete address not found', ({is, end}) => {
 })
 
 if (process.platform !== 'win32') {
-  test('shared-library maps addresses to static functions', ({is, end}) => {
+  test('shared-library maps addresses to static functions', ({ is, end }) => {
     const line = '00000001000fd500 t K256'
-    const [ strAddr, ...rest ] = line.split(' ')
+    const [strAddr, ...rest] = line.split(' ')
     const addr = parseInt(strAddr, 16).toString(16)
     const name = rest.join(' ').replace(/^T|t /, '')
     const spawn = cp.spawn
@@ -511,9 +511,9 @@ if (process.platform !== 'win32') {
     `)
   })
 
-  test('shared-library adjusts static function addresses per start address when appropriate', ({is, end}) => {
+  test('shared-library adjusts static function addresses per start address when appropriate', ({ is, end }) => {
     const line = '000000010000123c T _BIO_f_ssl'
-    const [ strAddr, ...rest ] = line.split(' ')
+    const [strAddr, ...rest] = line.split(' ')
     const addrn = parseInt(strAddr, 16)
     const name = rest.join(' ').replace(/^T|t /, '').trim()
 
@@ -544,9 +544,9 @@ if (process.platform !== 'win32') {
     `)
   })
 
-  test('shared-library will not overwrite library address space with any symbols on that address', ({is, end}) => {
+  test('shared-library will not overwrite library address space with any symbols on that address', ({ is, end }) => {
     const line = '00000001000fd500 t K256'
-    const [ strAddr, ...rest ] = line.split(' ')
+    const [strAddr, ...rest] = line.split(' ')
     const addr = parseInt(strAddr, 16).toString(16)
     const name = rest.join(' ').replace(/^T|t /, '')
     const spawn = cp.spawn
@@ -575,7 +575,7 @@ if (process.platform !== 'win32') {
     `)
   })
 
-  test('shared-library maps to library name when symbol is not found', ({is, end}) => {
+  test('shared-library maps to library name when symbol is not found', ({ is, end }) => {
     const stream = proffer()
 
     stream.once('data', (tick) => {
@@ -592,7 +592,7 @@ if (process.platform !== 'win32') {
     `)
   })
 
-  test('shared-library zero addresses in nm output', ({is, end}) => {
+  test('shared-library zero addresses in nm output', ({ is, end }) => {
     const spawn = cp.spawn
     cp.spawn = (cmd, ...args) => {
       if (cmd !== 'nm') { return cp.spawn(cmd, ...args) }
@@ -620,7 +620,7 @@ if (process.platform !== 'win32') {
     `)
   })
 
-  test('shared-library also handles V8 6.2 logs', ({is, end}) => {
+  test('shared-library also handles V8 6.2 logs', ({ is, end }) => {
     const stream = proffer()
 
     stream.once('data', (tick) => {
@@ -642,7 +642,7 @@ if (process.platform !== 'win32') {
   test('shared-library maps to library name when symbol is not found')
 }
 
-test('tick resolves name to address if dynamic function not found', ({is, end}) => {
+test('tick resolves name to address if dynamic function not found', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -658,7 +658,7 @@ test('tick resolves name to address if dynamic function not found', ({is, end}) 
   `)
 })
 
-test('tick resolves name to address if static function not found', ({is, end}) => {
+test('tick resolves name to address if static function not found', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -674,7 +674,7 @@ test('tick resolves name to address if static function not found', ({is, end}) =
   `)
 })
 
-test('tick adds the pc field to the stack', ({is, end}) => {
+test('tick adds the pc field to the stack', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -691,7 +691,7 @@ test('tick adds the pc field to the stack', ({is, end}) => {
   `)
 })
 
-test('tick adds external cb address to top of stack (when present) instead of pc', ({is, end}) => {
+test('tick adds external cb address to top of stack (when present) instead of pc', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -708,7 +708,7 @@ test('tick adds external cb address to top of stack (when present) instead of pc
   `)
 })
 
-test('tick adds top of stack address to stack (above pc) when top of stack address references a JS function', ({is, end}) => {
+test('tick adds top of stack address to stack (above pc) when top of stack address references a JS function', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -727,7 +727,7 @@ test('tick adds top of stack address to stack (above pc) when top of stack addre
   `)
 })
 
-test('tick does not add top of stack address to stack when top of stack address does not reference a JS function', ({is, end}) => {
+test('tick does not add top of stack address to stack when top of stack address does not reference a JS function', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
@@ -746,7 +746,7 @@ test('tick does not add top of stack address to stack when top of stack address 
   `)
 })
 
-test('tick maps vm state enum to vm state description', ({is, end}) => {
+test('tick maps vm state enum to vm state description', ({ is, end }) => {
   const stream = proffer()
   var n = 0
   const expected = [
@@ -776,12 +776,12 @@ test('tick maps vm state enum to vm state description', ({is, end}) => {
   `)
 })
 
-test('code-source-info adds function source extracted from script log events to tick stack frames', ({is, end}) => {
+test('code-source-info adds function source extracted from script log events to tick stack frames', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
     is(tick.stack[0].name, 'FindMe file.js:1:1', 'address mapped to function')
-    is(tick.stack[0].source, `function funcSource () { return 'woop' }`, 'function source added to tick stack')
+    is(tick.stack[0].source, 'function funcSource () { return \'woop\' }', 'function source added to tick stack')
     end()
   })
 
@@ -796,7 +796,7 @@ test('code-source-info adds function source extracted from script log events to 
   `)
 })
 
-test('code-source-info warns when code address is not found', ({is, end}) => {
+test('code-source-info warns when code address is not found', ({ is, end }) => {
   const stream = proffer({
     warn: (msg) => {
       is(msg, 'code-source-info code address 0x1cd8396af4b0 not found')
@@ -815,7 +815,7 @@ test('code-source-info warns when code address is not found', ({is, end}) => {
   `)
 })
 
-test('code-source-info warns when script is not found', ({is, end}) => {
+test('code-source-info warns when script is not found', ({ is, end }) => {
   const stream = proffer({
     warn: (msg) => {
       is(msg, 'code-source-info script 2 not found')
@@ -834,7 +834,7 @@ test('code-source-info warns when script is not found', ({is, end}) => {
   `)
 })
 
-test('script event will add empty source string when missing source field (crash defense)', ({is, end}) => {
+test('script event will add empty source string when missing source field (crash defense)', ({ is, end }) => {
   const stream = proffer()
 
   stream.once('data', (tick) => {
