@@ -5,9 +5,8 @@
   "main": "index.js",
   "bin": "./cmd.js",
   "scripts": {
-    "test": "tap test/index.js",
-    "cov": "tap --cov test/index.js",
-    "cov-ui": "tap --cov --coverage-report=html test/index.js",
+    "test": "tap test/index.js && standard",
+    "cov": "tap --coverage-report=html test/index.js",
     "lint": "standard"
   },
   "keywords": [],
